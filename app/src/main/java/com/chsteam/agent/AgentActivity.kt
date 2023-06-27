@@ -4,10 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.ViewModelLazy
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.room.Room
+import com.chsteam.agent.memory.database.AgentDatabase
 import com.chsteam.agent.setting.Settings
 import com.chsteam.agent.ui.page.MainPage
 import com.chsteam.agent.ui.theme.AgentTheme
@@ -22,7 +20,6 @@ class AgentActivity : ComponentActivity() {
         //Content
         setContent {
             init()
-
             AgentTheme {
                 MainPage()
             }
@@ -31,9 +28,15 @@ class AgentActivity : ComponentActivity() {
 
     private fun init() {
         settings = Settings(this)
+        agentDatabase = Room.databaseBuilder(
+            applicationContext,
+            AgentDatabase::class.java, "agent-database"
+        ).build()
+
     }
 
     companion object {
         lateinit var settings: Settings
+        lateinit var agentDatabase : AgentDatabase
     }
 }

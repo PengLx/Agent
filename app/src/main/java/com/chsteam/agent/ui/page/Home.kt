@@ -59,8 +59,10 @@ import com.chsteam.agent.AgentActivity
 import com.chsteam.agent.AgentViewModel
 import com.chsteam.agent.R
 import com.chsteam.agent.api.Role
+import com.chsteam.agent.gson.RoleAdapter
 import com.chsteam.agent.memory.Memory
 import com.chsteam.agent.memory.message.Message
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

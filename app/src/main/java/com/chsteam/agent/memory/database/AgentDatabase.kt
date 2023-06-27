@@ -8,6 +8,6 @@ import com.chsteam.agent.memory.database.history.HistoryMessageDao
 
 @Database(entities = [HistoryMessage::class], version = 1)
 @TypeConverters(Converters::class)
-abstract class Database : RoomDatabase() {
+abstract class AgentDatabase : RoomDatabase() {
     abstract fun historyMessageDao() : HistoryMessageDao
 }
