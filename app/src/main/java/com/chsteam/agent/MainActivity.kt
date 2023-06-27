@@ -10,16 +10,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowCompat
+import com.chsteam.agent.ui.page.MainPage
 import com.chsteam.agent.ui.theme.AgentTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //System Settings
+        WindowCompat.setDecorFitsSystemWindows(window,false)
+
+
+        //Content
         setContent {
             AgentTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-
-                }
+                MainPage()
             }
         }
     }
