@@ -1,12 +1,13 @@
 package com.chsteam.agent.ui.page
 
-import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
@@ -14,16 +15,15 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,18 +53,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.ViewModelFactoryDsl
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.chsteam.agent.AgentActivity
+import com.chsteam.agent.AgentViewModel
 import com.chsteam.agent.R
+import com.chsteam.agent.api.Role
+import com.chsteam.agent.memory.Memory
+import com.chsteam.agent.memory.message.Message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun MainPage() {
+
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     var textFieldState by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
-
+    val agentViewModel : AgentViewModel = viewModel()
 
     //TODO Swap Fix
     LaunchedEffect(drawerState.isAnimationRunning) {
@@ -80,10 +88,20 @@ fun MainPage() {
             bottomBar = { ChatBottomBar(
                 textFieldState,
                 onTextFieldValueChange = { textFieldState = it },
+                onSendButtonClicked = { message ->
+                    textFieldState = ""
+                    agentViewModel.addMessage(Message(Role.USER, message))
+                    //TODO Memory System
+                }
             ) },
             modifier = Modifier.systemBarsPadding()
         ) { contentPadding ->
-            Box(modifier = Modifier.padding(contentPadding))
+            Box(modifier = Modifier
+                .padding(contentPadding)
+                .fillMaxSize()) {
+                ChatSpace(agentViewModel)
+            }
+
         }
     }
 }
@@ -132,6 +150,7 @@ fun TopBar(scope: CoroutineScope, drawerState: DrawerState) {
 fun ChatBottomBar(
     textFieldState: String,
     onTextFieldValueChange: (String) -> Unit,
+    onSendButtonClicked: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier
@@ -152,9 +171,45 @@ fun ChatBottomBar(
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            IconButton(onClick = { /*TODO*/ } , Modifier.weight(1f)) {
+            IconButton(onClick = { if(textFieldState != "") onSendButtonClicked(textFieldState) } , Modifier.weight(1f)) {
                 Image(imageVector = Icons.Default.Send, contentDescription = "Send Button", colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary))
             }
         }
+    }
+}
+
+@Composable
+fun ChatSpace(agentViewModel : AgentViewModel) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(modifier = Modifier.weight(1f)) {
+            items(agentViewModel.getMessage()) { message ->
+                ChatBox(message = message)
+            }
+        }
+    }
+}
+
+@Composable
+fun ChatBox(message: Message) {
+    //TODO 颜色分析与选择调整
+    Row(
+        Modifier
+            .background(if (message.role == Role.USER) Color.White else Color.LightGray)
+            .fillMaxSize()
+            .padding(start = 20.dp, end = 40.dp, top = 20.dp, bottom = 20.dp)
+    ) {
+       when(message.role) {
+           Role.USER -> {
+               Icon(imageVector = Icons.Default.Face, contentDescription = "User_Icon")
+           }
+           Role.ASSISTANT -> {
+               Icon(imageVector = Icons.Default.Star, contentDescription = "Assistant_Icon")
+           }
+           Role.SYSTEM -> {
+
+           }
+       }
+        Spacer(modifier = Modifier.width(20.dp))
+        Text(text = message.message, color = Color.Black)
     }
 }
