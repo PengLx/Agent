@@ -3,16 +3,26 @@ package com.chsteam.agent
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.chsteam.agent.api.Role
 import com.chsteam.agent.memory.message.Message
+import com.cjcrafter.openai.OpenAI
+import com.cjcrafter.openai.chat.ChatMessage.Companion.toUserMessage
+import com.cjcrafter.openai.chat.ChatRequest
+import com.cjcrafter.openai.completions.CompletionRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.function.Consumer
 
 class AgentViewModel : ViewModel() {
-    private val message = mutableStateListOf<Message>()
+    private val messages = mutableStateListOf<Message>()
 
     fun addMessage(message: Message) {
-        this.message.add(message)
+        messages.add(message)
     }
 
-    fun getMessage() : SnapshotStateList<Message> {
-        return message
+    fun getMessages(): SnapshotStateList<Message> {
+        return messages
     }
 }

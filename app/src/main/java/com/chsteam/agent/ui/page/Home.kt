@@ -1,5 +1,6 @@
 package com.chsteam.agent.ui.page
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -53,18 +54,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.ViewModelFactoryDsl
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.chsteam.agent.AgentActivity
 import com.chsteam.agent.AgentViewModel
 import com.chsteam.agent.R
 import com.chsteam.agent.api.Role
-import com.chsteam.agent.gson.RoleAdapter
-import com.chsteam.agent.memory.Memory
 import com.chsteam.agent.memory.message.Message
-import com.google.gson.GsonBuilder
+import com.cjcrafter.openai.OpenAI
+import com.cjcrafter.openai.chat.ChatMessage.Companion.toUserMessage
+import com.cjcrafter.openai.chat.ChatRequest
+import com.cjcrafter.openai.completions.CompletionRequest
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import java.util.function.Consumer
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -93,7 +99,8 @@ fun MainPage() {
                 onSendButtonClicked = { message ->
                     textFieldState = ""
                     agentViewModel.addMessage(Message(Role.USER, message))
-                    //TODO Memory System
+                    send(message, agentViewModel)
+                    //TODO SEND AND MEMORY
                 }
             ) },
             modifier = Modifier.systemBarsPadding()
@@ -184,7 +191,7 @@ fun ChatBottomBar(
 fun ChatSpace(agentViewModel : AgentViewModel) {
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(modifier = Modifier.weight(1f)) {
-            items(agentViewModel.getMessage()) { message ->
+            items(agentViewModel.getMessages()) { message ->
                 ChatBox(message = message)
             }
         }
@@ -214,4 +221,18 @@ fun ChatBox(message: Message) {
         Spacer(modifier = Modifier.width(20.dp))
         Text(text = message.message, color = Color.Black)
     }
+}
+
+fun send(message: String, viewModel: AgentViewModel) {
+    val messages = mutableListOf(message.toUserMessage())
+    val request = ChatRequest(model="gpt-3.5-turbo", messages=messages)
+
+    val openai = OpenAI("API")
+
+    openai.createChatCompletionAsync(
+        request = request,
+        onResponse = { response ->
+            viewModel.addMessage(Message(Role.ASSISTANT, response[0].message.content)) },
+        onFailure = { viewModel.addMessage(Message(Role.ASSISTANT, it.message ?: "发生错误"))}
+    )
 }
