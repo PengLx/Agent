@@ -7,12 +7,13 @@ class Settings(context: Context) {
 
     companion object {
         const val API = "api"
-
         lateinit var OpenAI_KEY : String
+        var UseGPT4 : Boolean = false
     }
 
     init {
         OpenAI_KEY = getUserSetting(API, "")
+        UseGPT4 = getUserSetting("gpt4", false)
     }
 
     fun saveUserSetting(key: String, value: Int) {
