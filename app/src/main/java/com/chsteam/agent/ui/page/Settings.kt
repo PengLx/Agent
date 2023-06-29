@@ -54,14 +54,14 @@ fun SettingsPage() {
         Column(modifier = Modifier
             .padding(contentPadding)
             .fillMaxSize()) {
-            Column() {
+            Column {
                 TextField(
                     value = text,
                     label = { Text(text = "ChatGPT Key")},
                     leadingIcon = { Icon(imageVector = Icons.Default.Edit, contentDescription = "Key") },
                     singleLine = true,
                     onValueChange = { textFieldValue ->
-                        text = textFieldValue
+                        text = textFieldValue.replace(Regex("[^a-zA-Z0-9\\-]"), "")
                         Settings.OpenAI_KEY = text
                         AgentActivity.settings.saveUserSetting(Settings.API, text)
                     },

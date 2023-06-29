@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -116,7 +117,8 @@ fun Main(scope: CoroutineScope, drawerState: DrawerState) {
                 agentViewModel.addMessage(Message(Role.USER, message))
                 MessageManager.send(message, agentViewModel)
                 //TODO SEND AND MEMORY
-            }
+            },
+            canSend = agentViewModel.canSend
         ) },
         modifier = Modifier.systemBarsPadding(),
     ) { contentPadding ->
@@ -178,8 +180,11 @@ fun ChatBottomBar(
     textFieldState: String,
     onTextFieldValueChange: (String) -> Unit,
     onSendButtonClicked: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    canSend: MutableState<Boolean>
 ) {
+
+    val agentViewModel : AgentViewModel = viewModel()
     Box(modifier = modifier
         .fillMaxWidth()
         .navigationBarsPadding()
@@ -198,8 +203,15 @@ fun ChatBottomBar(
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            IconButton(onClick = { if(textFieldState != "") onSendButtonClicked(textFieldState) } , Modifier.weight(1f)) {
-                Image(imageVector = Icons.Default.Send, contentDescription = "Send Button", colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary))
+            if (canSend.value) {
+                IconButton(onClick = { if(textFieldState != "") {
+                    onSendButtonClicked(textFieldState)
+                    agentViewModel.canSend.value = false
+                } } , Modifier.weight(1f)) {
+                    Image(imageVector = Icons.Default.Send, contentDescription = "Send Button", colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary))
+                }
+            } else {
+                CircularProgressIndicator()
             }
         }
     }

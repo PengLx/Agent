@@ -18,8 +18,12 @@ object MessageManager {
         openai.createChatCompletionAsync(
             request = request,
             onResponse = { response ->
-                viewModel.addMessage(Message(Role.ASSISTANT, response[0].message.content)) },
-            onFailure = { viewModel.addMessage(Message(Role.ASSISTANT, it.message ?: "发生错误"))}
+                viewModel.addMessage(Message(Role.ASSISTANT, response[0].message.content))
+                viewModel.canSend.value = true },
+            onFailure = {
+                viewModel.addMessage(Message(Role.ASSISTANT, it.message ?: "发生错误"))
+                viewModel.canSend.value = true
+            }
         )
     }
 }

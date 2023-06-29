@@ -22,6 +22,8 @@ class AgentViewModel : ViewModel() {
 
     val currentPage = mutableStateOf("Home")
 
+    val canSend = mutableStateOf(true)
+
     fun addMessage(message: Message) {
         messages.add(message)
     }
