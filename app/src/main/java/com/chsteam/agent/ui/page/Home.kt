@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
@@ -64,6 +65,7 @@ import com.chsteam.agent.manager.MessageManager
 import com.chsteam.agent.memory.message.Message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -124,7 +126,8 @@ fun Main(scope: CoroutineScope, drawerState: DrawerState) {
     ) { contentPadding ->
         Box(modifier = Modifier
             .padding(contentPadding)
-            .fillMaxSize()) {
+            .fillMaxSize()
+        ) {
             ChatSpace(agentViewModel)
         }
     }
@@ -219,12 +222,16 @@ fun ChatBottomBar(
 
 @Composable
 fun ChatSpace(agentViewModel : AgentViewModel) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            items(agentViewModel.getMessages()) { message ->
-                ChatBox(message = message)
-            }
+    val lazyListState = rememberLazyListState()
+
+    LazyColumn(state = lazyListState,modifier = Modifier.fillMaxSize()) {
+        items(agentViewModel.getMessages()) { message ->
+            ChatBox(message = message)
         }
+    }
+
+    LaunchedEffect(key1 = agentViewModel.getMessages().size) {
+        lazyListState.animateScrollToItem(lazyListState.layoutInfo.totalItemsCount)
     }
 }
 
