@@ -42,6 +42,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,18 +59,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chsteam.agent.AgentViewModel
 import com.chsteam.agent.R
 import com.chsteam.agent.api.Role
+import com.chsteam.agent.manager.MessageManager
 import com.chsteam.agent.memory.message.Message
-import com.cjcrafter.openai.OpenAI
-import com.cjcrafter.openai.chat.ChatMessage.Companion.toUserMessage
-import com.cjcrafter.openai.chat.ChatRequest
-import com.cjcrafter.openai.completions.CompletionRequest
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import java.util.function.Consumer
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -78,7 +71,6 @@ fun MainPage() {
 
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    var textFieldState by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
     val agentViewModel : AgentViewModel = viewModel()
 
@@ -90,27 +82,48 @@ fun MainPage() {
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = { ModalDrawer(scope = scope, drawerState = drawerState) },
-    ) {
-        Scaffold(
-            topBar = { TopBar(scope, drawerState) },
-            bottomBar = { ChatBottomBar(
-                textFieldState,
-                onTextFieldValueChange = { textFieldState = it },
-                onSendButtonClicked = { message ->
-                    textFieldState = ""
-                    agentViewModel.addMessage(Message(Role.USER, message))
-                    send(message, agentViewModel)
-                    //TODO SEND AND MEMORY
-                }
-            ) },
-            modifier = Modifier.systemBarsPadding()
-        ) { contentPadding ->
-            Box(modifier = Modifier
-                .padding(contentPadding)
-                .fillMaxSize()) {
-                ChatSpace(agentViewModel)
-            }
+        content = {
+            switchPage(scope = scope, drawerState = drawerState, page = agentViewModel.currentPage)
+        }
+    )
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun switchPage(scope: CoroutineScope, drawerState: DrawerState, page: MutableState<String>) {
+    when(page.value) {
+        "Home" -> {
+            Main(scope = scope, drawerState = drawerState)
+        }
+        "Setting" -> {
+            SettingsPage()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Main(scope: CoroutineScope, drawerState: DrawerState) {
+    var textFieldState by remember { mutableStateOf("") }
+    val agentViewModel : AgentViewModel = viewModel()
+    Scaffold(
+        topBar = { TopBar(scope, drawerState) },
+        bottomBar = { ChatBottomBar(
+            textFieldState,
+            onTextFieldValueChange = { textFieldState = it },
+            onSendButtonClicked = { message ->
+                textFieldState = ""
+                agentViewModel.addMessage(Message(Role.USER, message))
+                MessageManager.send(message, agentViewModel)
+                //TODO SEND AND MEMORY
+            }
+        ) },
+        modifier = Modifier.systemBarsPadding(),
+    ) { contentPadding ->
+        Box(modifier = Modifier
+            .padding(contentPadding)
+            .fillMaxSize()) {
+            ChatSpace(agentViewModel)
         }
     }
 }
@@ -122,6 +135,7 @@ fun ModalDrawer(scope: CoroutineScope, drawerState: DrawerState) {
     val items = listOf(Icons.Default.Home, Icons.Default.Settings)
     val labels = listOf(R.string.home, R.string.settings)
     val selectedItem = remember { mutableStateOf(items[0]) }
+    val agentViewModel : AgentViewModel = viewModel()
 
     ModalDrawerSheet {
         Spacer(Modifier.height(12.dp))
@@ -133,6 +147,10 @@ fun ModalDrawer(scope: CoroutineScope, drawerState: DrawerState) {
                 onClick = {
                     scope.launch { drawerState.close() }
                     selectedItem.value = item
+                    when(item) {
+                        items[0] -> agentViewModel.currentPage.value = "Home"
+                        items[1] -> agentViewModel.currentPage.value = "Setting"
+                    }
                 },
                 modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
             )
@@ -209,10 +227,10 @@ fun ChatBox(message: Message) {
     ) {
        when(message.role) {
            Role.USER -> {
-               Icon(imageVector = Icons.Default.Face, contentDescription = "User_Icon")
+               Icon(imageVector = Icons.Default.Face, contentDescription = "User Icon")
            }
            Role.ASSISTANT -> {
-               Icon(imageVector = Icons.Default.Star, contentDescription = "Assistant_Icon")
+               Icon(imageVector = Icons.Default.Star, contentDescription = "Assistant Icon")
            }
            Role.SYSTEM -> {
 
@@ -221,18 +239,4 @@ fun ChatBox(message: Message) {
         Spacer(modifier = Modifier.width(20.dp))
         Text(text = message.message, color = Color.Black)
     }
-}
-
-fun send(message: String, viewModel: AgentViewModel) {
-    val messages = mutableListOf(message.toUserMessage())
-    val request = ChatRequest(model="gpt-3.5-turbo", messages=messages)
-
-    val openai = OpenAI("API")
-
-    openai.createChatCompletionAsync(
-        request = request,
-        onResponse = { response ->
-            viewModel.addMessage(Message(Role.ASSISTANT, response[0].message.content)) },
-        onFailure = { viewModel.addMessage(Message(Role.ASSISTANT, it.message ?: "发生错误"))}
-    )
 }

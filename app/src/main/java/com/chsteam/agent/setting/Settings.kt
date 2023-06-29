@@ -8,11 +8,11 @@ class Settings(context: Context) {
     companion object {
         const val API = "api"
 
-        lateinit var OpenAI_API : String
+        lateinit var OpenAI_KEY : String
     }
 
     init {
-        OpenAI_API = getUserSetting(API, "")
+        OpenAI_KEY = getUserSetting(API, "")
     }
 
     fun saveUserSetting(key: String, value: Int) {

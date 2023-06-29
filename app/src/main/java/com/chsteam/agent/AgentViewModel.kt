@@ -1,6 +1,8 @@
 package com.chsteam.agent
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +19,8 @@ import java.util.function.Consumer
 
 class AgentViewModel : ViewModel() {
     private val messages = mutableStateListOf<Message>()
+
+    val currentPage = mutableStateOf("Home")
 
     fun addMessage(message: Message) {
         messages.add(message)
