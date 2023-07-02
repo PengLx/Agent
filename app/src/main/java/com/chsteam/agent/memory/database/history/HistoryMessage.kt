@@ -10,6 +10,6 @@ import androidx.room.Insert
 
 @Entity(tableName = "history_message")
 data class HistoryMessage(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int?,
     @ColumnInfo(name = "message") val message: Message
 )

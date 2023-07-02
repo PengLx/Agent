@@ -37,7 +37,6 @@ class AgentActivity : ComponentActivity() {
             applicationContext,
             AgentDatabase::class.java, "agent-database"
         ).build()
-
     }
 
     companion object {
