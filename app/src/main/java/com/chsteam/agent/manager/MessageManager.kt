@@ -1,29 +1,27 @@
 package com.chsteam.agent.manager
 
+import com.chsteam.agent.AgentActivity
 import com.chsteam.agent.AgentViewModel
 import com.chsteam.agent.api.Role
+import com.chsteam.agent.memory.Memory
+import com.chsteam.agent.memory.database.history.HistoryMessage
 import com.chsteam.agent.memory.message.Message
-import com.chsteam.agent.setting.Settings
-import com.cjcrafter.openai.OpenAI
-import com.cjcrafter.openai.chat.ChatMessage.Companion.toUserMessage
-import com.cjcrafter.openai.chat.ChatRequest
 
 object MessageManager {
-    fun send(message: String, viewModel: AgentViewModel) {
-        val messages = mutableListOf(message.toUserMessage())
-        val request = ChatRequest(model="gpt-3.5-turbo", messages=messages)
 
-        val openai = OpenAI(Settings.OpenAI_KEY)
+    fun handleNewMessage(message: Message,agentViewModel: AgentViewModel) {
 
-        openai.createChatCompletionAsync(
-            request = request,
-            onResponse = { response ->
-                viewModel.addMessage(Message(Role.ASSISTANT, response[0].message.content))
-                viewModel.canSend.value = true },
-            onFailure = {
-                viewModel.addMessage(Message(Role.ASSISTANT, it.message ?: "发生错误"))
-                viewModel.canSend.value = true
-            }
-        )
+        //真实记忆添加
+        Memory.tureMemory.add(message)
+
+        if (message.role != Role.SYSTEM) {
+            agentViewModel.addMessage(message = message)
+            //数据库操作
+            //添加信息展示的数据内容
+            AgentActivity.agentDatabase.historyMessageDao().insertAll(HistoryMessage(null, message))
+        }
+        if(message.role == Role.USER) {
+            Memory.send(agentViewModel)
+        }
     }
 }

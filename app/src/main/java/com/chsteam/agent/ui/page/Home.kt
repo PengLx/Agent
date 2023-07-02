@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -62,10 +61,11 @@ import com.chsteam.agent.AgentViewModel
 import com.chsteam.agent.R
 import com.chsteam.agent.api.Role
 import com.chsteam.agent.manager.MessageManager
+import com.chsteam.agent.memory.Memory
 import com.chsteam.agent.memory.message.Message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.lang.Exception
+import java.util.Date
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -77,7 +77,7 @@ fun MainPage() {
     val keyboardController = LocalSoftwareKeyboardController.current
     val agentViewModel : AgentViewModel = viewModel()
 
-    //TODO Swap Fix
+    //TODO 键盘闪烁修复
     LaunchedEffect(drawerState.isAnimationRunning) {
         keyboardController?.hide()
     }
@@ -116,9 +116,7 @@ fun Main(scope: CoroutineScope, drawerState: DrawerState) {
             onTextFieldValueChange = { textFieldState = it },
             onSendButtonClicked = { message ->
                 textFieldState = ""
-                agentViewModel.addMessage(Message(Role.USER, message))
-                MessageManager.send(message, agentViewModel)
-                //TODO SEND AND MEMORY
+                MessageManager.handleNewMessage(Message(Role.USER, message, Date()), agentViewModel)
             },
             canSend = agentViewModel.canSend
         ) },
