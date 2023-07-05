@@ -1,5 +1,7 @@
 package com.chsteam.agent.ui.page
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,14 +13,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -47,6 +56,8 @@ fun SettingsPage() {
     }
 
     val (checkedState, onStateChange) = remember { mutableStateOf(true) }
+
+    val systemFunction: MutableInteractionSource = remember { MutableInteractionSource() }
 
     Scaffold(topBar = {
         TopBar()
@@ -98,6 +109,21 @@ fun SettingsPage() {
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(start = 16.dp)
                     )
+                }
+
+                Divider()
+
+                Column(Modifier.fillMaxWidth()) {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                        AssistChip(
+                            onClick = {
+
+                            },
+                            label = { Text(text = "SystemFunction")},
+                            leadingIcon = { Icon(imageVector = Icons.Filled.Close, contentDescription = "") },
+                            interactionSource = systemFunction
+                        )
+                    }
                 }
             }
         }

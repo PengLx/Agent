@@ -249,9 +249,7 @@ fun ChatBox(message: Message) {
            Role.ASSISTANT -> {
                Icon(imageVector = Icons.Default.Star, contentDescription = "Assistant Icon")
            }
-           Role.SYSTEM -> {
-
-           }
+           else -> {}
        }
         Spacer(modifier = Modifier.width(20.dp))
         Text(text = message.message, color = Color.Black)

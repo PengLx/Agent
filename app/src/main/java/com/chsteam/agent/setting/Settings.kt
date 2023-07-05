@@ -1,6 +1,8 @@
 package com.chsteam.agent.setting
 
 import android.content.Context
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class Settings(context: Context) {
     private val sharedPreferences = context.getSharedPreferences("user_settings", Context.MODE_PRIVATE)
@@ -46,6 +48,12 @@ class Settings(context: Context) {
         editor.apply()
     }
 
+    fun saveUserSetting(key: String, list: List<String>) {
+        val gson = Gson()
+        val json = gson.toJson(list)
+        saveUserSetting(key, json)
+    }
+
     private fun getUserSetting(key: String, defaultValue: Int): Int {
         return sharedPreferences.getInt(key, defaultValue)
     }
@@ -65,4 +73,12 @@ class Settings(context: Context) {
     private fun getUserSetting(key: String, defaultValue: Long): Long {
         return sharedPreferences.getLong(key, defaultValue)
     }
+
+    private fun getUserSetting(key: String): List<String> {
+        val gson = Gson()
+        val json = getUserSetting(key, "")
+        val type = object : TypeToken<List<String>>() {}.type
+        return gson.fromJson(json, type)
+    }
+
 }
