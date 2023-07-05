@@ -15,6 +15,11 @@ import java.util.Locale
 
 
 class SystemFunction : Function() {
+
+    companion object {
+        const val ID = "SYSTEM"
+    }
+
     override val functionList: List<ChatFunction>
         get() = listOf(
             ChatFunction("getCurrentTime", "Return the user local time", ChatFunction.Parameters()),

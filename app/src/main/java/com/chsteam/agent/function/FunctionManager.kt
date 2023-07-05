@@ -10,10 +10,8 @@ object FunctionManager {
     fun getFunctions() = functions
 
     fun registerFunction(function: String) {
-        when(function) {
-            "system" -> {
-                registerFunction(SystemFunction())
-            }
+        when(function.uppercase()) {
+            SystemFunction.ID -> registerFunction(SystemFunction())
         }
     }
 
