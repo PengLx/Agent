@@ -34,6 +34,7 @@ object Memory {
                 Role.USER -> message.message.toUserMessage()
                 Role.ASSISTANT -> message.message.toAssistantMessage()
                 Role.SYSTEM -> message.message.toSystemMessage()
+                Role.FUNCTION -> {}
             }
         }
 

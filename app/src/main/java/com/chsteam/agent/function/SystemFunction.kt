@@ -29,7 +29,7 @@ class SystemFunction : Function() {
     override fun execute(name: String, vararg params: String) {
         val result = when(name) {
             "getCurrentTime" -> getCurrentTime()
-            "getCurrentLocation" -> getCurrentLocation(context = AgentActivity.context)
+            "getCurrentLocation" -> getCurrentLocation(context = AgentActivity.INSTANCE)
             else -> {"NONE"}
         }
 

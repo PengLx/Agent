@@ -33,16 +33,16 @@ class AgentActivity : ComponentActivity() {
     }
 
     private fun init() {
+        INSTANCE = this
         settings = Settings(this)
         agentDatabase = Room.databaseBuilder(
             applicationContext,
             AgentDatabase::class.java, "agent-database"
         ).build()
-        context = this.applicationContext
     }
 
     companion object {
-        lateinit var context: Context
+        lateinit var INSTANCE : ComponentActivity
         lateinit var settings: Settings
         lateinit var agentDatabase : AgentDatabase
     }
