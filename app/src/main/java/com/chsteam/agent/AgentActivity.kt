@@ -1,5 +1,6 @@
 package com.chsteam.agent
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,9 +38,11 @@ class AgentActivity : ComponentActivity() {
             applicationContext,
             AgentDatabase::class.java, "agent-database"
         ).build()
+        context = this.applicationContext
     }
 
     companion object {
+        lateinit var context: Context
         lateinit var settings: Settings
         lateinit var agentDatabase : AgentDatabase
     }
