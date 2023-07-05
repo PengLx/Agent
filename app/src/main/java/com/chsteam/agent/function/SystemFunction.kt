@@ -6,64 +6,74 @@ import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import androidx.core.app.ActivityCompat
+import com.chsteam.agent.api.ChatFunction
 import com.google.android.gms.location.LocationServices
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 
-object SystemFunction {
+class SystemFunction {
 
-    fun getCurrentTime(): String {
-        val current = LocalDateTime.now()
-
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-
-        return current.format(formatter)
+    init {
+        FunctionManager.functionList.addAll(
+            listOf(
+                ChatFunction("getCurrentTime", "Return the user local time", ChatFunction.Parameters()),
+                ChatFunction("getCurrentLocation", "Return the user location of city", ChatFunction.Parameters())
+            )
+        )
     }
 
-    fun getCurrentLocation(context: Context) : String {
+    companion object {
+        fun getCurrentTime(): String {
+            val current = LocalDateTime.now()
 
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
-        val loc = LocationServices.getFusedLocationProviderClient(context)
-
-
-        return if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            "Permission Denied"
-        } else {
-            getCityFromLocation(loc.lastLocation.result, context = context) ?: "Failed"
+            return current.format(formatter)
         }
-    }
+
+        fun getCurrentLocation(context: Context) : String {
 
 
-    private fun getCityFromLocation(location: Location, context: Context): String? {
-        val geocoder = Geocoder(context, Locale.getDefault())
-        return try {
-            val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-            addresses?.let {
-                if(addresses.isNotEmpty()) {
-                    addresses[0].locality
-                } else null
+            val loc = LocationServices.getFusedLocationProviderClient(context)
+
+
+            return if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                "Permission Denied"
+            } else {
+                getCityFromLocation(loc.lastLocation.result, context = context) ?: "Failed"
             }
-        } catch (e: Exception) {
-            // Handle the exception
-            null
+        }
+
+
+        private fun getCityFromLocation(location: Location, context: Context): String? {
+            val geocoder = Geocoder(context, Locale.getDefault())
+            return try {
+                val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                addresses?.let {
+                    if(addresses.isNotEmpty()) {
+                        addresses[0].locality
+                    } else null
+                }
+            } catch (e: Exception) {
+                // Handle the exception
+                null
+            }
         }
     }
-
-
 }
