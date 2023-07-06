@@ -1,11 +1,8 @@
 package com.chsteam.agent
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.PermissionChecker
 import androidx.core.view.WindowCompat
 import androidx.room.Room
 import com.chsteam.agent.memory.database.AgentDatabase
@@ -34,10 +31,11 @@ class AgentActivity : ComponentActivity() {
     private fun init() {
         INSTANCE = this
         settings = Settings(this)
+        //TODO 发布时需要移除开发模式语句
         agentDatabase = Room.databaseBuilder(
             applicationContext,
             AgentDatabase::class.java, "agent-database"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     companion object {

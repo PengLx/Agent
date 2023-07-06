@@ -23,8 +23,8 @@ abstract class AgentDatabase : RoomDatabase() {
 
     abstract fun taskDao() : TaskDao
 
-    fun clearAndResetAllTables(): CoroutineScope.() -> Unit = {
-        this.launch {
+    fun clearAndResetAllTables() {
+        CoroutineScope(Dispatchers.Main).launch {
             withContext(Dispatchers.IO) {
                 clearAllTables()
             }
