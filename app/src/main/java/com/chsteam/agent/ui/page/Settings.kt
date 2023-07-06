@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -113,16 +114,18 @@ fun SettingsPage() {
 
                 Divider()
 
-                Column(Modifier.fillMaxWidth()) {
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                        AssistChip(
-                            onClick = {
-
-                            },
-                            label = { Text(text = "SystemFunction")},
-                            leadingIcon = { Icon(imageVector = Icons.Filled.Close, contentDescription = "") },
-                            interactionSource = systemFunction
-                        )
+                Row(Modifier.fillMaxWidth()) {
+                    Column() {
+                        Text(text = "Clear")
+                        Text(text = "Clear the database of agent")
+                    }
+                    Button(
+                        onClick = {
+                            AgentActivity.agentDatabase.clearAndResetAllTables()
+                        },
+                        
+                    ) {
+                        Text("Clear")
                     }
                 }
             }

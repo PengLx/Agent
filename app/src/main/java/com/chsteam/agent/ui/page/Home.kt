@@ -1,6 +1,5 @@
 package com.chsteam.agent.ui.page
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -61,8 +60,7 @@ import com.chsteam.agent.AgentViewModel
 import com.chsteam.agent.R
 import com.chsteam.agent.api.Role
 import com.chsteam.agent.manager.MessageManager
-import com.chsteam.agent.memory.Memory
-import com.chsteam.agent.memory.message.Message
+import com.chsteam.agent.memory.database.history.Message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -116,7 +114,7 @@ fun Main(scope: CoroutineScope, drawerState: DrawerState) {
             onTextFieldValueChange = { textFieldState = it },
             onSendButtonClicked = { message ->
                 textFieldState = ""
-                MessageManager.handleNewMessage(Message(Role.USER, message, Date()), agentViewModel)
+                MessageManager.handleNewMessage(Message(null, Role.USER, message, Date()), agentViewModel)
             },
             canSend = agentViewModel.canSend
         ) },

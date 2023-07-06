@@ -1,12 +1,9 @@
 package com.chsteam.agent.memory
 
-import android.provider.ContactsContract.Data
-import com.chsteam.agent.AgentActivity
 import com.chsteam.agent.AgentViewModel
 import com.chsteam.agent.api.Role
 import com.chsteam.agent.manager.MessageManager
-import com.chsteam.agent.memory.database.history.HistoryMessage
-import com.chsteam.agent.memory.message.Message
+import com.chsteam.agent.memory.database.history.Message
 import com.chsteam.agent.setting.Settings
 import com.cjcrafter.openai.OpenAI
 import com.cjcrafter.openai.chat.ChatMessage
@@ -45,10 +42,10 @@ object Memory {
         openai.createChatCompletionAsync(
             request = request,
             onResponse = { response ->
-                MessageManager.handleNewMessage(Message(Role.ASSISTANT, response[0].message.content, Date()) , viewModel)
+                MessageManager.handleNewMessage(Message(null, Role.ASSISTANT, response[0].message.content, Date()) , viewModel)
                 viewModel.canSend.value = true },
             onFailure = {
-                viewModel.addMessage(Message(Role.ASSISTANT, it.message ?: "发生错误", Date()))
+                viewModel.addMessage(Message(null, Role.ASSISTANT, it.message ?: "发生错误", Date()))
                 viewModel.canSend.value = true
             }
         )

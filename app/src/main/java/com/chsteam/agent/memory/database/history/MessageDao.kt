@@ -5,10 +5,10 @@ import androidx.room.Insert
 import androidx.room.Query
 
 @Dao
-interface HistoryMessageDao {
+interface MessageDao {
     @Query("SELECT * FROM history_message WHERE id BETWEEN :startId AND :endId")
-    fun getMessageInRange(startId: Int, endId: Int): List<HistoryMessage>
+    fun getMessageInRange(startId: Int, endId: Int): List<Message>
 
     @Insert
-    fun insertAll(vararg messages: HistoryMessage)
+    fun insertAll(vararg messages: Message)
 }
