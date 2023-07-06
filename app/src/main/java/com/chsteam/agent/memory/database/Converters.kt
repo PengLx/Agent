@@ -2,10 +2,7 @@ package com.chsteam.agent.memory.database
 
 import androidx.room.TypeConverter
 import com.chsteam.agent.api.Role
-import com.chsteam.agent.gson.DateAdapter
-import com.chsteam.agent.gson.RoleAdapter
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import java.util.Date
 
