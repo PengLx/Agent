@@ -3,8 +3,8 @@ package com.chsteam.agent.memory.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.chsteam.agent.memory.database.history.Message
-import com.chsteam.agent.memory.database.history.MessageDao
+import com.chsteam.agent.memory.database.message.Message
+import com.chsteam.agent.memory.database.message.MessageDao
 import com.chsteam.agent.memory.database.task.TaskDao
 import com.chsteam.agent.memory.database.task.TaskData
 import com.chsteam.agent.memory.database.vector.Vector

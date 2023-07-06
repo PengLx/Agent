@@ -1,4 +1,4 @@
-package com.chsteam.agent.memory.database.history
+package com.chsteam.agent.memory.database.message
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -11,4 +11,7 @@ interface MessageDao {
 
     @Insert
     fun insertAll(vararg messages: Message)
+
+    @Query("SELECT * FROM history_message WHERE id = :id")
+    fun getMessageById(id: Int): Message?
 }

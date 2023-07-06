@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
-import com.chsteam.agent.memory.database.history.Message
+import com.chsteam.agent.memory.database.message.Message
 
 class AgentViewModel : ViewModel() {
     private val messages = mutableStateListOf<Message>()

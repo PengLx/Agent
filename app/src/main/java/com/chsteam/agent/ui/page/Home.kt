@@ -60,7 +60,7 @@ import com.chsteam.agent.AgentViewModel
 import com.chsteam.agent.R
 import com.chsteam.agent.api.Role
 import com.chsteam.agent.manager.MessageManager
-import com.chsteam.agent.memory.database.history.Message
+import com.chsteam.agent.memory.database.message.Message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Date

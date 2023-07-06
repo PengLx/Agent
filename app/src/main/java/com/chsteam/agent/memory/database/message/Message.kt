@@ -1,4 +1,4 @@
-package com.chsteam.agent.memory.database.history
+package com.chsteam.agent.memory.database.message
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

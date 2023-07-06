@@ -4,7 +4,7 @@ import com.chsteam.agent.AgentActivity
 import com.chsteam.agent.AgentViewModel
 import com.chsteam.agent.api.Role
 import com.chsteam.agent.memory.Memory
-import com.chsteam.agent.memory.database.history.Message
+import com.chsteam.agent.memory.database.message.Message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
