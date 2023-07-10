@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.chsteam.agent.api.Role
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.nio.ByteBuffer
 import java.util.Date
 
 class Converters {
@@ -47,5 +48,24 @@ class Converters {
     @TypeConverter
     fun fromRole(role: Role): String {
         return role.name
+    }
+
+    @TypeConverter
+    fun fromFloatArrayToBlob(floatArray: FloatArray): ByteArray {
+        val byteBuffer = ByteBuffer.allocate(4 * floatArray.size)
+        for (i in floatArray.indices) {
+            byteBuffer.putFloat(i * 4, floatArray[i])
+        }
+        return byteBuffer.array()
+    }
+
+    @TypeConverter
+    fun fromBlobToFloatArray(byteArray: ByteArray): FloatArray {
+        val byteBuffer = ByteBuffer.wrap(byteArray)
+        val floatArray = FloatArray(byteArray.size / 4)
+        for (i in floatArray.indices) {
+            floatArray[i] = byteBuffer.getFloat(i * 4)
+        }
+        return floatArray
     }
 }
