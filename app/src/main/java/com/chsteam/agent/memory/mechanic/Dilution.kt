@@ -4,7 +4,6 @@ import com.chsteam.agent.memory.database.vector.TextVector
 import org.apache.commons.math3.ml.distance.EuclideanDistance
 import com.chsteam.agent.memory.Memory.textVectors
 
-//该类用于淡化记忆以及清除归档记忆
 class Dilution {
 
     fun updatePheromones(newMemory: TextVector, decayRate: Double, distanceFactor: Double) {
