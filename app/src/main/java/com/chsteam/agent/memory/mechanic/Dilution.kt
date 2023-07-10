@@ -1,42 +1,25 @@
 package com.chsteam.agent.memory.mechanic
 
+import com.chsteam.agent.memory.database.vector.TextVector
 import org.apache.commons.math3.ml.distance.EuclideanDistance
+import com.chsteam.agent.memory.Memory.textVectors
 
 //该类用于淡化记忆以及清除归档记忆
 class Dilution {
 
-    // 记忆数据库，Key为唯一标识符，Value为一个Pair对象，包含内容和信息素强度
-    val memoryDatabase: MutableMap<String, Pair<String, Double>> = mutableMapOf()
-
-    // 假设我们有一个将文本转换为向量的函数
-    fun textToVector(text: String): DoubleArray {
-        // 这里仅为示例，实际的转换方法可能需要NLP库，例如Word2Vec, BERT等
-        return doubleArrayOf()
-    }
-
-    fun updatePheromonesWithSimilarity(newMemory: Pair<String, Double>, decayRate: Double, boostRate: Double, topN: Int) {
-        val newVector = textToVector(newMemory.first)
-
-        // 计算新记忆与所有旧记忆的相似度
-        val similarities = mutableMapOf<String, Double>()
-        for ((key, memory) in memoryDatabase) {
-            val oldVector = textToVector(memory.first)
-            val distance = EuclideanDistance().compute(newVector, oldVector)  // 计算向量距离
-            similarities[key] = 1 / (1 + distance)  // 计算相似度
+    fun updatePheromones(newMemory: TextVector, decayRate: Double, distanceFactor: Double) {
+        // 计算新记忆与所有旧记忆的距离
+        val distances = mutableMapOf<Int, Double>()
+        for (oldMemory in textVectors) {
+            val distance = EuclideanDistance().compute(newMemory.vector.map { it.toDouble() }.toDoubleArray(), oldMemory.vector.map { it.toDouble() }.toDoubleArray())
+            distances[oldMemory.id] = distance
         }
 
-        // 找到与新记忆最相似的topN个旧记忆，并增加其信息素强度
-        val topSimilarKeys =
-            similarities.entries.sortedByDescending { it.value }.take(topN).map { it.key }
-        for (key in topSimilarKeys) {
-            val oldMemory = memoryDatabase[key]!!
-            memoryDatabase[key] = Pair(oldMemory.first, oldMemory.second * (1.0 + boostRate))
-        }
-
-        // 对所有记忆进行淡化
-        for (key in memoryDatabase.keys - topSimilarKeys.toSet()) {
-            val oldMemory = memoryDatabase[key]!!
-            memoryDatabase[key] = Pair(oldMemory.first, oldMemory.second * (1.0 - decayRate))
+        // 根据距离调整信息素强度，并进行淡化
+        for (oldMemory in textVectors) {
+            val distance = distances[oldMemory.id]!!
+            val pheromoneAdjustFactor = 1 / (1 + distance * distanceFactor)  // 根据距离计算信息素强度调整因子
+            oldMemory.pheromones = oldMemory.pheromones * pheromoneAdjustFactor * (1.0 - decayRate)
         }
     }
 }

@@ -6,6 +6,7 @@ import com.chsteam.agent.api.Role
 import com.chsteam.agent.function.FunctionManager
 import com.chsteam.agent.manager.MessageManager
 import com.chsteam.agent.memory.database.message.Message
+import com.chsteam.agent.memory.database.vector.TextVector
 import com.chsteam.agent.setting.Settings
 import com.cjcrafter.openai.OpenAI
 import com.cjcrafter.openai.chat.ChatMessage
@@ -23,6 +24,8 @@ object Memory {
 
     //真实记忆 真实记忆是要发送给GPT的所有信息
     val tureMemory = mutableListOf<Message>()
+
+    val textVectors = mutableListOf<TextVector>()
 
     fun send(viewModel: AgentViewModel) {
 
@@ -51,17 +54,18 @@ object Memory {
         )
     }
 
-    fun pullFormTask() {
+    //获取信息素大于0.2 即系统判断应该是未完成的信息
+    fun pullFromVector() {
         CoroutineScope(Dispatchers.Main).launch {
             withContext(Dispatchers.IO) {
-                val taskList = AgentActivity.agentDatabase.taskDao().getAllUncompletedTasks()
+                val vectorList = AgentActivity.agentDatabase.vectorDao().getTrueMemory()
 
-                val allContainMessages: List<Int> = taskList.flatMap { it.containMessage }
-
-                allContainMessages.sorted().forEach { id ->
-                    AgentActivity.agentDatabase.messageDao().getMessageById(id)?.let { message ->
-                        tureMemory.add(message)
-                    }
+                vectorList.forEach { vector ->
+                    textVectors.add(vector)
+                    AgentActivity.agentDatabase.messageDao().getMessageById(vector.id)
+                        ?.let { message ->
+                            tureMemory.add(message)
+                        }
                 }
             }
         }

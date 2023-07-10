@@ -15,7 +15,7 @@ import com.chsteam.agent.memory.database.message.Message
     )]
 )
 data class TextVector(
-    @PrimaryKey(autoGenerate = false) val id: Int?,
+    @PrimaryKey(autoGenerate = false) val id: Int,
     @ColumnInfo(name = "vector") val vector: FloatArray,
-    @ColumnInfo(name = "pheromones") val pheromones: Double,
+    @ColumnInfo(name = "pheromones") var pheromones: Double,
 )
