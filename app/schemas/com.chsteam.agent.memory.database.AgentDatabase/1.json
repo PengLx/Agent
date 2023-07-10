@@ -2,10 +2,10 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e6607b8642ceaa23bddbe3accd821887",
+    "identityHash": "686902e0d6564d79e5ae2ee46d57baad",
     "entities": [
       {
-        "tableName": "history_message",
+        "tableName": "message",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `role` TEXT NOT NULL, `message` TEXT NOT NULL, `data` INTEGER NOT NULL)",
         "fields": [
           {
@@ -44,7 +44,7 @@
       },
       {
         "tableName": "TextVector",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `vector` BLOB NOT NULL, `pheromones` REAL NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`id`) REFERENCES `history_message`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `vector` BLOB NOT NULL, `pheromones` REAL NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`id`) REFERENCES `message`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -74,7 +74,7 @@
         "indices": [],
         "foreignKeys": [
           {
-            "table": "history_message",
+            "table": "message",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
@@ -128,7 +128,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e6607b8642ceaa23bddbe3accd821887')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '686902e0d6564d79e5ae2ee46d57baad')"
     ]
   }
 }

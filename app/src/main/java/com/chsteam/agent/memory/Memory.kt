@@ -3,6 +3,7 @@ package com.chsteam.agent.memory
 import com.chsteam.agent.AgentActivity
 import com.chsteam.agent.AgentViewModel
 import com.chsteam.agent.api.Role
+import com.chsteam.agent.function.FunctionManager
 import com.chsteam.agent.manager.MessageManager
 import com.chsteam.agent.memory.database.message.Message
 import com.chsteam.agent.setting.Settings
@@ -34,7 +35,7 @@ object Memory {
             }
         }
 
-        val request = ChatRequest(model="gpt-3.5-turbo", messages= messages as MutableList<ChatMessage>)
+        val request = ChatRequest(model="gpt-3.5-turbo", messages= messages as MutableList<ChatMessage>, functions = FunctionManager.getFunctions())
 
         val openai = OpenAI(Settings.OpenAI_KEY)
 

@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import com.chsteam.agent.api.Role
 import java.util.Date
 
-@Entity(tableName = "history_message")
+@Entity(tableName = "message")
 data class Message(
     @PrimaryKey(autoGenerate = true) val id: Int?,
     @ColumnInfo(name = "role") val role: Role,
