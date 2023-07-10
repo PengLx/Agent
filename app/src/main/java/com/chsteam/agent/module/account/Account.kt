@@ -5,11 +5,6 @@ open class Account {
 
     }
 
-    //TODO 不是你苹果账户在安卓上登录什么？
-    class AppleAccount : Account() {
-
-    }
-
     class MicrosoftAccount : Account() {
 
     }
