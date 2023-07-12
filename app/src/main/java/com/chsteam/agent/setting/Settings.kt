@@ -1,6 +1,7 @@
 package com.chsteam.agent.setting
 
 import android.content.Context
+import com.chsteam.agent.function.FunctionManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -11,11 +12,13 @@ class Settings(context: Context) {
         const val API = "api"
         lateinit var OpenAI_KEY : String
         var UseGPT4 : Boolean = false
+        lateinit var FEATURES : Features
     }
 
     init {
         OpenAI_KEY = getUserSetting(API, "")
         UseGPT4 = getUserSetting("gpt4", false)
+        FEATURES = Features(this)
     }
 
     fun saveUserSetting(key: String, value: Int) {
@@ -81,4 +84,37 @@ class Settings(context: Context) {
         return gson.fromJson(json, type)
     }
 
+    class Features(private val settings: Settings) {
+        private val features = HashMap<String, Boolean>()
+
+        fun setFeature(feature: String, isEnabled: Boolean) {
+            features[feature] = isEnabled
+        }
+
+        fun isFeatureEnabled(feature: String): Boolean {
+            return features[feature] ?: false
+        }
+
+        fun save() {
+            if (features.isNotEmpty()) {
+                val gson = Gson()
+                val json = gson.toJson(features)
+                settings.saveUserSetting("features", json)
+            }
+        }
+
+        init {
+            val json = settings.getUserSetting("features", "")
+            if (json.isNotEmpty()) {
+                val gson = Gson()
+                val type = object : TypeToken<HashMap<String, Boolean>>() {}.type
+                val existingFeatures: HashMap<String, Boolean> = gson.fromJson(json, type)
+                features.putAll(existingFeatures)
+            }
+
+            FunctionManager.getAllFunctions().keys.forEach {
+                features.getOrPut(it) { false }
+            }
+        }
+    }
 }

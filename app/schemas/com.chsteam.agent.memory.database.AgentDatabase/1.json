@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "686902e0d6564d79e5ae2ee46d57baad",
+    "identityHash": "a83f8bbd2ca75b3d92eadde39797efc2",
     "entities": [
       {
         "tableName": "message",
@@ -44,13 +44,13 @@
       },
       {
         "tableName": "TextVector",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `vector` BLOB NOT NULL, `pheromones` REAL NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`id`) REFERENCES `message`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `vector` BLOB NOT NULL, `pheromones` REAL NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`id`) REFERENCES `message`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "vector",
@@ -128,7 +128,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '686902e0d6564d79e5ae2ee46d57baad')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a83f8bbd2ca75b3d92eadde39797efc2')"
     ]
   }
 }

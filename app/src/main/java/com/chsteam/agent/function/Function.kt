@@ -4,11 +4,21 @@ import com.cjcrafter.openai.chat.ChatFunction
 
 abstract class Function {
 
+    abstract val name : String
+
     abstract val functionList : List<ChatFunction>
 
     abstract fun execute(name: String, vararg params: String)
 
     fun pushResult(string: String) {
 
+    }
+
+    private fun registerID() {
+        FunctionManager.register(this.name, this::class)
+    }
+
+    init {
+        registerID()
     }
 }

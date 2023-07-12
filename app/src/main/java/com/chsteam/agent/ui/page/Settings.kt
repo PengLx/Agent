@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chsteam.agent.AgentActivity
 import com.chsteam.agent.AgentViewModel
+import com.chsteam.agent.function.FunctionManager
 import com.chsteam.agent.setting.Settings
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,6 +61,7 @@ fun SettingsPage() {
             BasicSettingCard()
             Divider()
             AppCard()
+            FeaturesCard()
         }
     }
 }
@@ -138,6 +140,33 @@ fun AppCard() {
         elevation = CardDefaults.cardElevation(8.dp),
     ) {
 
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FeaturesCard() {
+    val features = FunctionManager.getAllFunctions()
+    Card(
+        modifier = Modifier.padding(16.dp).fillMaxWidth()
+    ) {
+        Column(Modifier.padding(16.dp).fillMaxWidth()) {
+            features.keys.forEach { feature ->
+                var chipEnabled by remember { mutableStateOf(Settings.FEATURES.isFeatureEnabled(feature)) }
+                AssistChip(
+                    onClick = {
+                        chipEnabled = !chipEnabled
+                        if(chipEnabled) {
+                            FunctionManager.registerFunction(feature)
+                        }
+                        Settings.FEATURES.setFeature(feature, chipEnabled)
+                    },
+                    enabled = chipEnabled,
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    label = { Text(text = feature)}
+                )
+            }
+        }
     }
 }
 

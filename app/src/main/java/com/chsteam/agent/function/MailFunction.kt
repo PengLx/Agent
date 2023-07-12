@@ -5,6 +5,9 @@ import com.cjcrafter.openai.chat.ChatFunction
 
 abstract class MailFunction : Function() {
 
+    override val name: String
+        get() = "Mail"
+
     private val instance by lazy {
         when(Mail.INSTANCE) {
             Mail.GOOGLE -> GoogleMail()

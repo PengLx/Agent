@@ -18,9 +18,8 @@ import java.util.Locale
 
 class SystemFunction : Function() {
 
-    companion object {
-        const val ID = "SYSTEM"
-    }
+    override val name: String
+        get() = "System"
 
     override val functionList: List<ChatFunction>
         get() = listOf(
