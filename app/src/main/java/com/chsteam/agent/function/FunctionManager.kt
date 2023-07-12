@@ -37,4 +37,9 @@ object FunctionManager {
         val function = registerFunction[name]?.constructors?.firstOrNull()?.call()
         function?.execute(name, *params)
     }
+
+    init {
+        register(SystemFunction().name, SystemFunction::class)
+        register(MailFunction.instance.name, MailFunction::class)
+    }
 }

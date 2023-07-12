@@ -7,12 +7,13 @@ abstract class MailFunction : Function() {
 
     override val name: String
         get() = "Mail"
-
-    private val instance by lazy {
-        when(Mail.INSTANCE) {
-            Mail.GOOGLE -> GoogleMail()
-            Mail.OUTLOOK -> OutLookMail()
-            Mail.QQ -> QQMail()
+    companion object {
+        val instance by lazy {
+            when(Mail.INSTANCE) {
+                Mail.GOOGLE -> GoogleMail()
+                Mail.OUTLOOK -> OutLookMail()
+                Mail.QQ -> QQMail()
+            }
         }
     }
 

@@ -14,11 +14,4 @@ abstract class Function {
 
     }
 
-    private fun registerID() {
-        FunctionManager.register(this.name, this::class)
-    }
-
-    init {
-        registerID()
-    }
 }
