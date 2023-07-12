@@ -1,5 +1,9 @@
 package com.chsteam.agent.ui.page
 
+import android.app.Activity
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
@@ -53,9 +58,11 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.chsteam.agent.AgentActivity
 import com.chsteam.agent.AgentViewModel
 import com.chsteam.agent.R
 import com.chsteam.agent.api.Role
@@ -182,8 +189,14 @@ fun ChatBottomBar(
     modifier: Modifier = Modifier,
     canSend: MutableState<Boolean>
 ) {
-
+    val context = LocalContext.current
     val agentViewModel : AgentViewModel = viewModel()
+
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
+        val speechResult = agentViewModel.handleVoiceInput(AgentViewModel.REQUEST_CODE_SPEECH_INPUT, result.resultCode, result.data)
+        onTextFieldValueChange(speechResult)
+    }
+
     Box(modifier = modifier
         .fillMaxWidth()
         .navigationBarsPadding()
@@ -203,11 +216,20 @@ fun ChatBottomBar(
             Spacer(modifier = Modifier.width(8.dp))
 
             if (canSend.value) {
-                IconButton(onClick = { if(textFieldState != "") {
-                    onSendButtonClicked(textFieldState)
-                    agentViewModel.canSend.value = false
-                } } , Modifier.weight(1f)) {
-                    Image(imageVector = Icons.Default.Send, contentDescription = "Send Button", colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary))
+                //TODO 语言转文字
+                if(true) {
+                    IconButton(onClick = { if(textFieldState != "") {
+                        onSendButtonClicked(textFieldState)
+                        agentViewModel.canSend.value = false
+                    } } , Modifier.weight(1f)) {
+                        Image(imageVector = Icons.Default.Send, contentDescription = "Send Button", colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary))
+                    }
+                } else {
+                    IconButton(onClick = {
+                        agentViewModel.speak(launcher) // here
+                    }) {
+                        Image(imageVector = Icons.Default.Call, contentDescription = "")
+                    }
                 }
             } else {
                 CircularProgressIndicator()
@@ -215,6 +237,7 @@ fun ChatBottomBar(
         }
     }
 }
+
 
 @Composable
 fun ChatSpace(agentViewModel : AgentViewModel) {

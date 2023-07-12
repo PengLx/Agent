@@ -1,6 +1,9 @@
 package com.chsteam.agent.ui.page
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -60,7 +63,6 @@ fun SettingsPage() {
         {
             BasicSettingCard()
             Divider()
-            AppCard()
             FeaturesCard()
         }
     }
@@ -130,27 +132,14 @@ fun BasicSettingCard() {
     }
 }
 
-@Composable
-fun AppCard() {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        shape = RoundedCornerShape(16.dp), // 这里设置卡片的圆角
-        elevation = CardDefaults.cardElevation(8.dp),
-    ) {
-
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun FeaturesCard() {
     val features = FunctionManager.getAllFunctions()
     Card(
         modifier = Modifier.padding(16.dp).fillMaxWidth()
     ) {
-        Column(Modifier.padding(16.dp).fillMaxWidth()) {
+        FlowRow(Modifier.padding(16.dp).fillMaxWidth()) {
             features.keys.forEach { feature ->
                 var chipEnabled by remember { mutableStateOf(Settings.FEATURES.isFeatureEnabled(feature)) }
                 AssistChip(
@@ -160,15 +149,17 @@ fun FeaturesCard() {
                             FunctionManager.registerFunction(feature)
                         }
                         Settings.FEATURES.setFeature(feature, chipEnabled)
+                        Log.d("Agent", "click")
                     },
                     enabled = chipEnabled,
-                    modifier = Modifier.padding(vertical = 8.dp),
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp),
                     label = { Text(text = feature)}
                 )
             }
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
