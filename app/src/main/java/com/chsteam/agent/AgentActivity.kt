@@ -5,10 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import androidx.room.Room
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.chsteam.agent.memory.database.AgentDatabase
 import com.chsteam.agent.setting.Settings
 import com.chsteam.agent.ui.page.MainPage
 import com.chsteam.agent.ui.theme.AgentTheme
+import com.chsteam.agent.work.SaveWorker
 
 class AgentActivity : ComponentActivity() {
 
@@ -26,6 +29,12 @@ class AgentActivity : ComponentActivity() {
                 MainPage()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val request = OneTimeWorkRequestBuilder<SaveWorker>().build()
+        WorkManager.getInstance(this).enqueue(request)
     }
 
     private fun init() {
